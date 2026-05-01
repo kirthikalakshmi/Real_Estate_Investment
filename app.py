@@ -3,20 +3,10 @@
 # ================================
 import streamlit as st
 import pandas as pd
-import sys
 import matplotlib.pyplot as plt
-import base64
 
-# fix import path
-sys.path.append("D:/Internship/labmentix/Real_Estate")
+# import scoring functions (relative import)
 from utils.scoring import *
-
-# ================================
-# 📌 FUNCTION: LOAD LOCAL IMAGE
-# ================================
-def get_base64_image(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
 
 # ================================
 # 📌 PAGE CONFIG
@@ -24,51 +14,58 @@ def get_base64_image(image_path):
 st.set_page_config(page_title="Real Estate Advisor", layout="wide")
 
 # ================================
-# 🎨 LOCAL BACKGROUND IMAGE
+# 🎨 BACKGROUND (ONLINE IMAGE)
 # ================================
-image_path = "D:/Internship/labmentix/Real_Estate/image.png"
-img_base64 = get_base64_image(image_path)
-
-st.markdown(f"""
+st.markdown("""
 <style>
-.stApp {{
+.stApp {
     background: linear-gradient(rgba(15,61,62,0.9), rgba(15,61,62,0.9)),
-                url("data:image/png;base64,{img_base64}");
+                url("image.png");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-}}
+}
 
-.card {{
+.card {
     background: rgba(19, 111, 99, 0.6);
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0px 4px 20px rgba(0,0,0,0.4);
-}}
+}
 
-h1, h2, h3 {{
+h1, h2, h3 {
     color: #E8F6F3;
-}}
+}
 
-[data-testid="stMetric"] {{
+[data-testid="stMetric"] {
     background: rgba(19, 111, 99, 0.7);
     padding: 10px;
     border-radius: 10px;
-}}
+}
 
-button {{
+button {
     background-color: #00C2A8 !important;
     color: black !important;
     border-radius: 10px;
-}}
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ================================
-# 📌 LOAD DATA
+# 📌 LOAD DATA (RELATIVE PATH)
 # ================================
-df = pd.read_csv("D:/Internship/labmentix/Real_Estate/data/cleaned_data.csv")
+df = pd.read_csv("cleaned_data.csv")
 city_avg_price = df.groupby('City')['Price_in_Lakhs'].mean().to_dict()
+
+# ================================
+# 🏡 GLOBAL APP HEADER
+# ================================
+st.markdown("""
+<h1 style='text-align: center; color: #E8F6F3; margin-bottom: 10px;'>
+🏡 Real Estate Investment Analyzer
+</h1>
+<hr style='border: 1px solid rgba(255,255,255,0.2);'>
+""", unsafe_allow_html=True)
 
 # ================================
 # 📌 TABS
@@ -81,7 +78,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ================================
-# 🏠 TAB 1: OVERVIEW
+# 🏠 TAB 1
 # ================================
 with tab1:
     st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -96,7 +93,7 @@ with tab1:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ================================
-# 🔮 TAB 2: PREDICTION
+# 🔮 TAB 2
 # ================================
 with tab2:
     st.header("🔮 Property Prediction")
@@ -135,14 +132,14 @@ with tab2:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ================================
-# 📊 TAB 3: INSIGHTS
+# 📊 TAB 3
 # ================================
 with tab3:
     st.header("📊 Market Insights")
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    # 🏙 Top 10 Cities (FIXED + PREMIUM)
+    # Top Cities
     st.subheader("🏙 Top 10 Cities by Avg Price")
 
     city_price = (
@@ -162,13 +159,9 @@ with tab3:
     ax.tick_params(colors='white')
     ax.grid(True, linestyle='--', alpha=0.2)
 
-    for bar in bars:
-        bar.set_edgecolor('white')
-        bar.set_linewidth(0.5)
-
     st.pyplot(fig)
 
-    # 🏠 BHK Distribution
+    # BHK
     st.subheader("🏠 BHK Distribution")
 
     bhk_counts = df['BHK'].value_counts().sort_index()
@@ -188,7 +181,7 @@ with tab3:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ================================
-# 📈 TAB 4: SIMULATOR
+# 📈 TAB 4
 # ================================
 with tab4:
     st.header("📈 Investment Simulator")
