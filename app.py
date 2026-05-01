@@ -13,7 +13,7 @@ from utils.scoring import *
 # ================================
 st.set_page_config(page_title="Real Estate Advisor", layout="wide")
 
- -------------------------------
+#-------------------------------
 # LOAD LOCAL IMAGE (BASE64)
 # -------------------------------
 def get_base64_image(image_path):
