@@ -13,18 +13,26 @@ from utils.scoring import *
 # ================================
 st.set_page_config(page_title="Real Estate Advisor", layout="wide")
 
-# ================================
-# 🎨 BACKGROUND (ONLINE IMAGE)
-# ================================
-st.markdown("""
+ -------------------------------
+# LOAD LOCAL IMAGE (BASE64)
+# -------------------------------
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+img_base64 = get_base64_image(r"image.png")
+
+# -------------------------------
+# PREMIUM BACKGROUND + UI
+# -------------------------------
+st.markdown(f"""
 <style>
-.stApp {
-    background: linear-gradient(rgba(15,61,62,0.9), rgba(15,61,62,0.9)),
-                url("image.png");
+[data-testid="stAppViewContainer"] {{
+    background-image: url("data:image/png;base64,{img_base64}");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-}
+}}
 
 .card {
     background: rgba(19, 111, 99, 0.6);
