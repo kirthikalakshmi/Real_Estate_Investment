@@ -5,7 +5,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# import scoring functions (relative import)
+# import scoring functions
 from utils.scoring import *
 
 # ================================
@@ -13,26 +13,18 @@ from utils.scoring import *
 # ================================
 st.set_page_config(page_title="Real Estate Advisor", layout="wide")
 
-#-------------------------------
-# LOAD LOCAL IMAGE (BASE64)
-# -------------------------------
-def get_base64_image(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
-
-img_base64 = get_base64_image(r"image.png")
-
-# -------------------------------
-# PREMIUM BACKGROUND + UI
-# -------------------------------
-st.markdown(f"""
+# ================================
+# 🎨 BACKGROUND (GITHUB IMAGE)
+# ================================
+st.markdown("""
 <style>
-[data-testid="stAppViewContainer"] {{
-    background-image: url("data:image/png;base64,{img_base64}");
+.stApp {
+    background: linear-gradient(rgba(15,61,62,0.9), rgba(15,61,62,0.9)),
+                url("https://raw.githubusercontent.com/kirthikalakshmi/Real_Estate_Investment/main/image.png");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-}}
+}
 
 .card {
     background: rgba(19, 111, 99, 0.6);
@@ -60,18 +52,16 @@ button {
 """, unsafe_allow_html=True)
 
 # ================================
-# 📌 LOAD DATA (RELATIVE PATH)
+# 📌 LOAD DATA
 # ================================
 df = pd.read_csv("cleaned_data.csv")
 city_avg_price = df.groupby('City')['Price_in_Lakhs'].mean().to_dict()
 
 # ================================
-# 🏡 GLOBAL APP HEADER
+# 🏡 GLOBAL HEADER
 # ================================
 st.markdown("""
-<h1 style='text-align: center; color: #E8F6F3; margin-bottom: 10px;'>
-🏡 Real Estate Investment Analyzer
-</h1>
+<h1 style='text-align: center; color: #E8F6F3;'>🏡 Real Estate Investment Analyzer</h1>
 <hr style='border: 1px solid rgba(255,255,255,0.2);'>
 """, unsafe_allow_html=True)
 
@@ -91,8 +81,6 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.title("🏡 Real Estate Investment Analyzer")
-
     col1, col2, col3 = st.columns(3)
     col1.metric("Avg Price", f"{df['Price_in_Lakhs'].mean():.2f} Lakhs")
     col2.metric("Max Price", f"{df['Price_in_Lakhs'].max():.2f} Lakhs")
@@ -105,7 +93,6 @@ with tab1:
 # ================================
 with tab2:
     st.header("🔮 Property Prediction")
-
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
@@ -144,45 +131,33 @@ with tab2:
 # ================================
 with tab3:
     st.header("📊 Market Insights")
-
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
     # Top Cities
     st.subheader("🏙 Top 10 Cities by Avg Price")
 
-    city_price = (
-        df.groupby('City')['Price_in_Lakhs']
-        .mean()
-        .sort_values(ascending=False)
-        .head(10)
-    )
+    city_price = df.groupby('City')['Price_in_Lakhs'].mean().sort_values(ascending=False).head(10)
 
     fig, ax = plt.subplots()
-    bars = ax.barh(city_price.index, city_price.values, alpha=0.7)
+    ax.barh(city_price.index, city_price.values)
 
     ax.set_facecolor("none")
     fig.patch.set_alpha(0)
-
-    ax.set_title("Top 10 Cities by Avg Price", color='white')
     ax.tick_params(colors='white')
-    ax.grid(True, linestyle='--', alpha=0.2)
 
     st.pyplot(fig)
 
-    # BHK
+    # BHK Distribution
     st.subheader("🏠 BHK Distribution")
 
     bhk_counts = df['BHK'].value_counts().sort_index()
 
     fig, ax = plt.subplots()
-    ax.bar(bhk_counts.index.astype(str), bhk_counts.values, alpha=0.7)
+    ax.bar(bhk_counts.index.astype(str), bhk_counts.values)
 
     ax.set_facecolor("none")
     fig.patch.set_alpha(0)
-
-    ax.set_title("BHK Distribution", color='white')
     ax.tick_params(colors='white')
-    ax.grid(True, linestyle='--', alpha=0.2)
 
     st.pyplot(fig)
 
@@ -201,7 +176,7 @@ with tab4:
     values = []
     current = base_price
 
-    for i in range(years):
+    for _ in range(years):
         current *= (1 + growth_rate)
         values.append(current)
 
@@ -210,9 +185,6 @@ with tab4:
 
     ax.set_facecolor("none")
     fig.patch.set_alpha(0)
-
-    ax.set_title("Investment Growth", color='white')
     ax.tick_params(colors='white')
-    ax.grid(True, linestyle='--', alpha=0.2)
 
     st.pyplot(fig)
